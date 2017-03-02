@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
   canvas.width = canvas.clientWidth;
   canvas.height = canvas.clientHeight;
 
+  gameOfLife.start();
+
   window.gameOfLife = gameOfLife;
   window.canvas = canvas;
 });
@@ -18,7 +20,7 @@ class GameOfLife {
     this.canvas = canvas;
     this.step = 0;
     this.cellSize = 16;
-    this.stepInterval = 250;
+    this.stepInterval = 150;
     this.lastStepTime = 0;
     this.cells = new Matrix(100, 100);
   }
@@ -81,8 +83,12 @@ class GameOfLife {
     this.step++;
   }
 
-  pasteGlider(x, y) {
-    this.cells.paste(glider, x, y);
+  pasteGlider(x, y, rotation) {
+    this.cells.paste(glider.rotate(rotation), x, y);
+  }
+
+  pasteLightweightSpaceship(x, y, rotation) {
+    this.cells.paste(lightweightSpaceship.rotate(rotation), x, y);
   }
 
   getLiveNeighbourCount(dx, dy) {
@@ -108,8 +114,15 @@ class GameOfLife {
 
 class Matrix {
 
-  constructor(width, height) {
-    this.initialize(width, height)
+  constructor(width, height, data) {
+    if (data) {
+      this.cells = data;
+      this.width = width;
+      this.height = height;
+    } else {
+      this.initialize(width, height);
+    }
+
   }
 
   initialize(width, height) {
@@ -134,17 +147,9 @@ class Matrix {
   }
 
   paste(matrix, dx = 0, dy = 0) {
-    for (let x = 0; x < matrix.length; x++) {
-      for (let y = 0; y < matrix[x].length; y++) {
-        this.cells[dx + x][dy + y] = matrix[x][y];
-      }
-    }
-  }
-
-  iterate(callback) {
-    for (let x = 0; x < this.width; x++) {
-      for (let y = 0; y < this.height; y++) {
-        callback(x, y, this.cells[x][y]);
+    for (let x = 0; x < matrix.width; x++) {
+      for (let y = 0; y < matrix.height; y++) {
+        this.cells[dx + x][dy + y] = matrix.getValue(x, y);
       }
     }
   }
@@ -152,10 +157,35 @@ class Matrix {
   isInBounds(x, y) {
     return x >= 0 && y >= 0 && x < this.width && y < this.height;
   }
+
+  rotate(amount) {
+    const newWidth = amount % 2 === 0 ? this.width : this.height;
+    const newHeight = amount % 2 === 0 ? this.height : this.width;
+    const matrix = new Matrix(newWidth, newHeight)
+      ;
+    for (let x = 0; x < this.width; x++)
+      for (let y = 0; y < this.height; y++)
+        if (amount === 0)
+          matrix.setValue(x, y, this.getValue(x, y));
+        else if (amount === 1)
+          matrix.setValue(y, this.width - 1 - x, this.getValue(x, y));
+        else if (amount === 2)
+          matrix.setValue(this.width - 1 - x, this.height - 1 - y, this.getValue(x, y));
+        else if (amount === 3)
+          matrix.setValue(this.height - 1 - y, x, this.getValue(x, y));
+    return matrix;
+  }
 }
 
-const glider = [
+const glider = new Matrix(3, 3, [
   [0, 1, 0],
   [0, 0, 1],
   [1, 1, 1]
-];
+]);
+
+const lightweightSpaceship = new Matrix(4, 5, [
+  [0,1,1,0,0],
+  [1,1,1,1,0],
+  [1,1,0,1,1],
+  [0,0,1,1,0],
+]);
