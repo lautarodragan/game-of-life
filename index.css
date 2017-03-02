@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css?family=Quattrocento');
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  font-family: 'Quattrocento', serif;
+}
+
+body {
+  display: flex;
+}
+
+body .controls {
+  margin-right: 2px;
+  padding: 12px;
+}
+
+body canvas {
+  flex-grow: 1;
+  background-color: lightcoral;
+}
