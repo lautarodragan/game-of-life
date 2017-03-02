@@ -2,13 +2,18 @@ document.addEventListener('DOMContentLoaded', function() {
   const canvas = document.querySelector('canvas');
   const gameOfLife = new GameOfLife(canvas);
 
-  document.querySelector('#start').addEventListener('click', gameOfLife.start.bind(gameOfLife));
-  document.querySelector('#stop').addEventListener('click', gameOfLife.stop.bind(gameOfLife));
+  document.querySelector('#start').addEventListener('click', gameOfLife.startEvolving.bind(gameOfLife));
+  document.querySelector('#stop').addEventListener('click', gameOfLife.stopEvolving.bind(gameOfLife));
+  document.querySelector('#next-step').addEventListener('click', event => gameOfLife.nextStep());
+  document.querySelector('.interval input').addEventListener('change', event => gameOfLife.stepInterval = parseInt(event.target.value));
+  document.querySelector('.interval input').addEventListener('keyup', event => gameOfLife.stepInterval = parseInt(event.target.value));
+  document.querySelector('#add-glider').addEventListener('click', event => gameOfLife.pasteGlider(10, 10, 0));
+  document.querySelector('#add-lightweight-spaceship').addEventListener('click', event => gameOfLife.pasteLightweightSpaceship(10, 10, 0));
 
   canvas.width = canvas.clientWidth;
   canvas.height = canvas.clientHeight;
 
-  gameOfLife.start();
+  gameOfLife.startRendering();
 
   window.gameOfLife = gameOfLife;
   window.canvas = canvas;
@@ -29,21 +34,29 @@ class GameOfLife {
     return this.canvas.getContext('2d')
   }
 
-  start() {
+  startRendering() {
     this.animationFrameRequestId = requestAnimationFrame(this.loop.bind(this));
   }
 
-  stop() {
+  stopRendering() {
     if (!this.animationFrameRequestId)
       return;
     cancelAnimationFrame(this.animationFrameRequestId);
     this.animationFrameRequestId = null;
   }
 
+  startEvolving() {
+    this.evolving = true;
+  }
+
+  stopEvolving() {
+    this.evolving = false;
+  }
+
   loop() {
     this.render();
 
-    if (performance.now() > this.lastStepTime + this.stepInterval) {
+    if (this.evolving && performance.now() > this.lastStepTime + this.stepInterval) {
       this.lastStepTime = performance.now();
       this.nextStep();
     }

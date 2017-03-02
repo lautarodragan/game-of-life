@@ -30,6 +30,18 @@ body .controls {
   background-color: lightcoral;
 }
 
+body .controls .interval {
+  margin-bottom: 12px;
+}
+
+body .controls .interval input {
+  display: block;
+}
+
+body .controls .interval label {
+  display: block;
+}
+
 h1 {
   margin-top: 0;
 }
