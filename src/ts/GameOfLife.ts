@@ -39,6 +39,10 @@ export class GameOfLife {
     this.evolving = false;
   }
 
+  clear() {
+    this.cells = new Matrix<number>(this.cells.width, this.cells.height);
+  }
+
   loop() {
     this.render();
 
@@ -88,6 +92,10 @@ export class GameOfLife {
 
   pasteLightweightSpaceship(x: number, y: number, rotation: number): void {
     this.cells.paste(Patterns.lightweightSpaceship.rotate(rotation), x, y);
+  }
+
+  pasteBiClock(x: number, y: number, rotation: number): void {
+    this.cells.paste(Patterns.biClock.rotate(rotation), x, y);
   }
 
   getLiveNeighbourCount(dx: number, dy: number): number {
