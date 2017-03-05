@@ -10,12 +10,15 @@ export class GameOfLife {
   private animationFrameRequestId: number;
   private _evolving: boolean;
   public renderCellFunction: (x: number, y: number) => void;
+  public renderClearFunction: () => void;
   public interval: number = 150;
+  public gridVisible: boolean;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.cells = new Matrix<number>(100, 100);
     this.renderCellFunction = this.renderSquares;
+    this.renderClearFunction = this.renderClearPlain;
   }
 
   get context() {
@@ -65,12 +68,31 @@ export class GameOfLife {
   }
 
   render() {
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.renderClearFunction();
 
-    this.renderGrid();
+    if (this.gridVisible)
+      this.renderGrid();
+
     this.renderCells();
 
-    // this.renderInterval();
+  }
+
+  renderClearPlain() {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  renderClearFadeWhite() {
+    this.context.save();
+    this.context.fillStyle = `rgba(255, 255, 255, 0.03)`;
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.restore();
+  }
+
+  renderClearFadeColors() {
+    this.context.save();
+    this.context.fillStyle = `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.03)`;
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.restore();
   }
 
   renderGrid() {
@@ -141,23 +163,6 @@ export class GameOfLife {
   renderLines2(x: number, y: number) {
     this.renderLines(x, y, 2, 1);
     this.renderLines(x, y, 1, 2);
-  }
-
-
-  renderInterval() {
-
-    this.context.save();
-
-    this.context.font = '48px sans-serif';
-    this.context.textBaseline = 'top';
-    this.context.fillStyle = 'white';
-    this.context.strokeStyle = 'black';
-    this.context.lineWidth = 2;
-
-    this.context.fillText('Interval: ' + this.interval, 12, 12);
-    this.context.strokeText('Interval: ' + this.interval, 12, 12);
-
-    this.context.restore();
   }
 
   nextStep(): void {

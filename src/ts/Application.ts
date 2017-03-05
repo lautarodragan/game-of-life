@@ -64,6 +64,15 @@ document.addEventListener('DOMContentLoaded', function() {
       case 'r':
         gameOfLife.renderCellFunction = gameOfLife.renderLines2;
         break;
+      case 'a':
+        gameOfLife.renderClearFunction = gameOfLife.renderClearPlain;
+        break;
+      case 's':
+        gameOfLife.renderClearFunction = gameOfLife.renderClearFadeWhite;
+        break;
+      case 'd':
+        gameOfLife.renderClearFunction = gameOfLife.renderClearFadeColors;
+        break;
     }
   });
 
