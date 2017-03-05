@@ -11,6 +11,7 @@ export class GameOfLife {
   private _evolving: boolean;
   public renderCellFunction: (x: number, y: number) => void;
   public renderClearFunction: () => void;
+  public renderCellColorFunction: () => void;
   public interval: number = 150;
   public gridVisible: boolean;
 
@@ -19,6 +20,7 @@ export class GameOfLife {
     this.cells = new Matrix<number>(100, 100);
     this.renderCellFunction = this.renderSquares;
     this.renderClearFunction = this.renderClearPlain;
+    this.renderCellColorFunction = this.renderCellColorBlack;
   }
 
   get context() {
@@ -111,7 +113,7 @@ export class GameOfLife {
   }
 
   renderCells() {
-    this.context.strokeStyle = 'black';
+    this.renderCellColorFunction();
 
     for (let x = 0; x < this.cells.width; x++) {
       for (let y = 0; y < this.cells.height; y++) {
@@ -154,6 +156,17 @@ export class GameOfLife {
 
     this.context.restore();
 
+  }
+
+  renderCellColorBlack() {
+    this.context.strokeStyle = `black`;
+    this.context.fillStyle = `black`;
+  }
+
+  renderCellColorRandom() {
+    const lightest = 200;
+    this.context.strokeStyle = `rgb(${Math.floor(Math.random() * lightest)}, ${Math.floor(Math.random() * lightest)}, ${Math.floor(Math.random() * lightest)})`;
+    this.context.fillStyle = `rgb(${Math.floor(Math.random() * lightest)}, ${Math.floor(Math.random() * lightest)}, ${Math.floor(Math.random() * lightest)})`;
   }
 
   renderLines1(x: number, y: number) {

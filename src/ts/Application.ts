@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
       case '3':
         gameOfLife.pasteBiClock(10, 10, 0);
         break;
+
       case 'q':
         gameOfLife.renderCellFunction = gameOfLife.renderSquares;
         break;
@@ -64,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
       case 'r':
         gameOfLife.renderCellFunction = gameOfLife.renderLines2;
         break;
+
       case 'a':
         gameOfLife.renderClearFunction = gameOfLife.renderClearPlain;
         break;
@@ -72,6 +74,13 @@ document.addEventListener('DOMContentLoaded', function() {
         break;
       case 'd':
         gameOfLife.renderClearFunction = gameOfLife.renderClearFadeColors;
+        break;
+
+      case 'z':
+        gameOfLife.renderCellColorFunction = gameOfLife.renderCellColorBlack;
+        break;
+      case 'x':
+        gameOfLife.renderCellColorFunction = gameOfLife.renderCellColorRandom;
         break;
     }
   });
@@ -84,4 +93,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
   window.gameOfLife = gameOfLife;
   window.canvas = canvas;
+
+  window.addEventListener('resize', () => {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+  });
+
+  const audio = new Audio('audio_file.mp3');
+  audio.play();
+
+
 });
