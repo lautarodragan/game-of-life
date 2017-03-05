@@ -8,16 +8,22 @@ export class GameOfLife {
   private lastStepTime: number = 0;
   private cells: Matrix<number>;
   private animationFrameRequestId: number;
-  private evolving: boolean;
-  public stepInterval: number = 150;
+  private _evolving: boolean;
+  public renderCellFunction: (x: number, y: number) => void;
+  public interval: number = 150;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.cells = new Matrix<number>(100, 100);
+    this.renderCellFunction = this.renderSquares;
   }
 
   get context() {
     return this.canvas.getContext('2d')
+  }
+
+  get evolving() {
+    return this._evolving;
   }
 
   startRendering() {
@@ -32,11 +38,15 @@ export class GameOfLife {
   }
 
   startEvolving() {
-    this.evolving = true;
+    this._evolving = true;
   }
 
   stopEvolving() {
-    this.evolving = false;
+    this._evolving = false;
+  }
+
+  toggleEvolving() {
+    this._evolving = !this._evolving;
   }
 
   clear() {
@@ -46,7 +56,7 @@ export class GameOfLife {
   loop() {
     this.render();
 
-    if (this.evolving && performance.now() > this.lastStepTime + this.stepInterval) {
+    if (this._evolving && performance.now() > this.lastStepTime + this.interval) {
       this.lastStepTime = performance.now();
       this.nextStep();
     }
@@ -55,19 +65,99 @@ export class GameOfLife {
   }
 
   render() {
-    // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.renderGrid();
+    this.renderCells();
+
+    // this.renderInterval();
+  }
+
+  renderGrid() {
+    this.context.save();
+
+    this.context.strokeStyle = 'lightgray';
+    this.context.lineWidth = 1;
+
+    for (let x = 0; x < this.cells.width; x++) {
+      for (let y = 0; y < this.cells.height; y++) {
+        this.context.strokeRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
+      }
+    }
+
+    this.context.restore();
+  }
+
+  renderCells() {
     this.context.strokeStyle = 'black';
 
     for (let x = 0; x < this.cells.width; x++) {
       for (let y = 0; y < this.cells.height; y++) {
         const value = this.cells.getValue(x, y);
-        this.context.fillStyle = value ? 'black' : 'white';
-        this.context.fillRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
-        if (!value)
-          this.context.strokeRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
+        if (value) {
+          this.renderCellFunction(x, y);
+        }
+      }
+    }
+  }
+
+  renderSquares(x: number, y: number) {
+    this.context.fillRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
+  }
+
+  renderCircles(x: number, y: number) {
+    this.context.beginPath();
+    this.context.arc((x+1/2) * this.cellSize, (y+1/2) * this.cellSize, this.cellSize / 2, 0, 2 * Math.PI);
+    this.context.closePath();
+    this.context.fill();
+  }
+
+  renderLines(x: number, y: number, offset: number, lineWidth: number) {
+    this.context.save();
+    this.context.lineWidth = lineWidth;
+
+    for (let xx = x - offset; xx < x + offset + 1; xx++) {
+      for (let yy = y - offset; yy < y + offset + 1; yy++) {
+        if (!this.cells.isInBounds(xx, yy))
+          continue;
+        if (!this.cells.getValue(xx, yy))
+          continue;
+        this.context.beginPath();
+        this.context.moveTo((x + 1/2) * this.cellSize, (y + 1/2) * this.cellSize);
+        this.context.lineTo((xx + 1/2) * this.cellSize, (yy + 1/2) * this.cellSize);
+        this.context.closePath();
+        this.context.stroke();
       }
     }
 
+    this.context.restore();
+
+  }
+
+  renderLines1(x: number, y: number) {
+    this.renderLines(x, y, 1, 1);
+  }
+
+  renderLines2(x: number, y: number) {
+    this.renderLines(x, y, 2, 1);
+    this.renderLines(x, y, 1, 2);
+  }
+
+
+  renderInterval() {
+
+    this.context.save();
+
+    this.context.font = '48px sans-serif';
+    this.context.textBaseline = 'top';
+    this.context.fillStyle = 'white';
+    this.context.strokeStyle = 'black';
+    this.context.lineWidth = 2;
+
+    this.context.fillText('Interval: ' + this.interval, 12, 12);
+    this.context.strokeText('Interval: ' + this.interval, 12, 12);
+
+    this.context.restore();
   }
 
   nextStep(): void {

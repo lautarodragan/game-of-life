@@ -5,21 +5,15 @@
     <script type="text/javascript" src="bundle.js" ></script>
   </head>
   <body>
-    <section class="controls">
-      <h1>Game of Life</h1>
-      <section>
-        <div class="interval">
-          <input type="number" />
-          <label>interval</label>
-        </div>
-      </section>
-      <nav>
-        <button id="add-glider">Add Glider</button>
-        <button id="add-lightweight-spaceship">Add Lightweight Spaceship</button>
-        <button id="add-bi-clock">Add Bi-Clock</button>
+    <section class="controls-overlay">
+      <nav class="patterns">
+        <button id="add-glider">Glider</button>
+        <button id="add-lightweight-spaceship">Lightweight Spaceship</button>
+        <button id="add-bi-clock">Bi-Clock</button>
+      </nav>
+      <nav class="controls">
         <button id="next-step">Next Step</button>
-        <button id="start">Start</button>
-        <button id="stop">Stop</button>
+        <button id="start-stop">Stop</button>
         <button id="clear">Clear</button>
       </nav>
     </section>
