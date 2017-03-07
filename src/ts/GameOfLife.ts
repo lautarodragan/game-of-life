@@ -3,7 +3,7 @@ import { Matrix } from './Matrix';
 export class GameOfLife {
   private canvas: HTMLCanvasElement;
   private step: number;
-  private cellSize: number = 16;
+  public cellSize: number = 16;
   private lastStepTime: number = 0;
   private cells: Matrix<number>;
   private animationFrameRequestId: number;
@@ -14,9 +14,9 @@ export class GameOfLife {
   public interval: number = 150;
   public gridVisible: boolean;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, width: number, height: number) {
     this.canvas = canvas;
-    this.cells = new Matrix<number>(100, 100);
+    this.cells = new Matrix<number>(width, height);
     this.renderCellFunction = this.renderSquares;
     this.renderClearFunction = this.renderClearPlainWhite;
     this.renderCellColorFunction = this.renderCellColorBlack;
@@ -174,6 +174,11 @@ export class GameOfLife {
   renderCellColorBlack() {
     this.context.strokeStyle = `black`;
     this.context.fillStyle = `black`;
+  }
+
+  renderCellColorWhite() {
+    this.context.strokeStyle = `white`;
+    this.context.fillStyle = `white`;
   }
 
   renderCellColorRandom() {

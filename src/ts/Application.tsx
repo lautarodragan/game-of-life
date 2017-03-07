@@ -11,6 +11,8 @@ interface ApplicationState {
 
 class Application extends React.Component<undefined, ApplicationState> {
   private canvas: HTMLCanvasElement;
+  private readonly width = 400;
+  private readonly height = 400;
   private gameOfLife: GameOfLife;
 
   constructor() {
@@ -27,7 +29,7 @@ class Application extends React.Component<undefined, ApplicationState> {
       <div>
         <Controls
           isEvolving={this.state.isEvolving}
-          onPastePattern={(pattern) => this.gameOfLife.pastePattern(pattern, Math.floor(Math.random() * 100), Math.floor(Math.random() * 100))}
+          onPastePattern={(pattern) => this.gameOfLife.pastePattern(pattern, Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height))}
           onStartStop={() => this.toggleEvolving()}
           onNextStep={() => this.gameOfLife.nextStep()}
           onClear={() => this.gameOfLife.clear()}
@@ -41,7 +43,7 @@ class Application extends React.Component<undefined, ApplicationState> {
     window.addEventListener('resize', this.onResize);
     document.addEventListener('keydown', this.onKeyDown);
     this.updateCanvasSize();
-    this.gameOfLife = new GameOfLife(this.canvas);
+    this.gameOfLife = new GameOfLife(this.canvas, this.width, this.height);
     this.gameOfLife.startRendering();
     this.gameOfLife.startEvolving();
     this.setState({ isEvolving: true })
@@ -84,13 +86,13 @@ class Application extends React.Component<undefined, ApplicationState> {
         break;
 
       case '1':
-        this.gameOfLife.pastePattern(Patterns.glider, Math.floor(Math.random() * 100), Math.floor(Math.random() * 100));
+        this.gameOfLife.pastePattern(Patterns.glider, Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height));
         break;
       case '2':
-        this.gameOfLife.pastePattern(Patterns.lightweightSpaceship, Math.floor(Math.random() * 100), Math.floor(Math.random() * 100));
+        this.gameOfLife.pastePattern(Patterns.lightweightSpaceship, Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height));
         break;
       case '3':
-        this.gameOfLife.pastePattern(Patterns.biClock, Math.floor(Math.random() * 100), Math.floor(Math.random() * 100));
+        this.gameOfLife.pastePattern(Patterns.biClock, Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height));
         break;
 
       case 'q':
@@ -126,7 +128,26 @@ class Application extends React.Component<undefined, ApplicationState> {
         this.gameOfLife.renderCellColorFunction = this.gameOfLife.renderCellColorBlack;
         break;
       case 'x':
+        this.gameOfLife.renderCellColorFunction = this.gameOfLife.renderCellColorWhite;
+        break;
+      case 'c':
         this.gameOfLife.renderCellColorFunction = this.gameOfLife.renderCellColorRandom;
+        break;
+
+      case 'y':
+        this.gameOfLife.cellSize = 1;
+        break;
+      case 'u':
+        this.gameOfLife.cellSize = 2;
+        break;
+      case 'i':
+        this.gameOfLife.cellSize = 4;
+        break;
+      case 'o':
+        this.gameOfLife.cellSize = 8;
+        break;
+      case 'p':
+        this.gameOfLife.cellSize = 16;
         break;
     }
   }
