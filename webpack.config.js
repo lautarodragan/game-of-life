@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: ['./src/ts/Application.ts', './src/index.htm', './src/index.css'],
+  entry: ['./src/ts/Application.tsx', './src/index.htm', './src/index.css'],
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
@@ -20,10 +20,16 @@ module.exports = {
         test: /\.tsx?$/,
         loader: 'ts-loader',
         exclude: /node_modules/
+      },
+      {
+        test: /\.js?$/,
+        enforce: 'pre',
+        loader: 'source-map-loader',
+        exclude: /node_modules/
       }
     ]
   },
   resolve: {
-    extensions: ['.ts']
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
   }
 };

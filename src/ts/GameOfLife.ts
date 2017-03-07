@@ -1,5 +1,4 @@
 import { Matrix } from './Matrix';
-import { Patterns } from './Patterns';
 
 export class GameOfLife {
   private canvas: HTMLCanvasElement;
@@ -19,7 +18,7 @@ export class GameOfLife {
     this.canvas = canvas;
     this.cells = new Matrix<number>(100, 100);
     this.renderCellFunction = this.renderSquares;
-    this.renderClearFunction = this.renderClearPlain;
+    this.renderClearFunction = this.renderClearPlainWhite;
     this.renderCellColorFunction = this.renderCellColorBlack;
   }
 
@@ -79,13 +78,27 @@ export class GameOfLife {
 
   }
 
-  renderClearPlain() {
+  renderClearPlainWhite() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  renderClearPlainBlack() {
+    this.context.save();
+    this.context.fillStyle = `black`;
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.restore();
   }
 
   renderClearFadeWhite() {
     this.context.save();
     this.context.fillStyle = `rgba(255, 255, 255, 0.03)`;
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.restore();
+  }
+
+  renderClearFadeBlack() {
+    this.context.save();
+    this.context.fillStyle = `rgba(0, 0, 0, 0.03)`;
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     this.context.restore();
   }
@@ -194,16 +207,8 @@ export class GameOfLife {
     this.step++;
   }
 
-  pasteGlider(x: number, y: number, rotation: number): void {
-    this.cells.paste(Patterns.glider.rotate(rotation), x, y);
-  }
-
-  pasteLightweightSpaceship(x: number, y: number, rotation: number): void {
-    this.cells.paste(Patterns.lightweightSpaceship.rotate(rotation), x, y);
-  }
-
-  pasteBiClock(x: number, y: number, rotation: number): void {
-    this.cells.paste(Patterns.biClock.rotate(rotation), x, y);
+  pastePattern(pattern: Matrix<number>, x: number, y: number): void {
+    this.cells.paste(pattern, x, y);
   }
 
   getLiveNeighbourCount(dx: number, dy: number): number {
