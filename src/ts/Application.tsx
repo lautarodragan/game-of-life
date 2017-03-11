@@ -15,8 +15,6 @@ interface ApplicationState {
 }
 
 class Application extends React.Component<undefined, ApplicationState> {
-  private readonly width = 400;
-  private readonly height = 400;
   private canvas: HTMLCanvasElement;
   private gameOfLife: GameOfLife;
   private mouseMoveTimer: number;
@@ -51,6 +49,7 @@ class Application extends React.Component<undefined, ApplicationState> {
           onRenderClear={this.onRenderClear.bind(this)}
           onRenderCellColor={this.onRenderCellColor.bind(this)}
           onCellSize={(cellSize: number) => this.gameOfLife.cellSize = cellSize}
+          onResize={size => this.gameOfLife.resize(size, size)}
         />
         <canvas ref={canvas => this.canvas = canvas} tabIndex={0} />
       </section>
@@ -59,7 +58,7 @@ class Application extends React.Component<undefined, ApplicationState> {
 
   componentDidMount() {
     this.updateCanvasSize();
-    this.gameOfLife = new GameOfLife(this.canvas, this.width, this.height);
+    this.gameOfLife = new GameOfLife(this.canvas, 100, 100);
     this.gameOfLife.startRendering();
     this.gameOfLife.startEvolving();
     this.setState({ isEvolving: true })
@@ -74,7 +73,7 @@ class Application extends React.Component<undefined, ApplicationState> {
     }
 
     this.mouseMoveTimer = setTimeout(() => {
-      this.setState({ mouseMoved: false })
+      this.setState({ mouseMoved: false });
       this.mouseMoveTimer = null;
     }, 2000);
 
@@ -90,7 +89,7 @@ class Application extends React.Component<undefined, ApplicationState> {
   }
 
   private onPastePattern(pattern: Matrix<number>) {
-    this.gameOfLife.pastePattern(pattern.rotate(Math.floor(Math.random() * 4)), Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height))
+    this.gameOfLife.pastePattern(pattern.rotate(Math.floor(Math.random() * 4)), Math.floor(Math.random() * this.gameOfLife.width), Math.floor(Math.random() * this.gameOfLife.height))
   }
 
   private onRenderCellShape(renderCellMode: RenderModes.CellShape) {

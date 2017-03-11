@@ -14,6 +14,7 @@ export interface KeyboardProps {
   readonly onRenderCellShape: (renderCellMode: RenderModes.CellShape) => void;
   readonly onRenderClear: (renderCellMode: RenderModes.Clear) => void;
   readonly onRenderCellColor: (renderCellMode: RenderModes.CellColor) => void;
+  readonly onResize: (size: number) => void;
 }
 
 export class Keyboard extends React.Component<KeyboardProps, undefined> {
@@ -117,6 +118,16 @@ export class Keyboard extends React.Component<KeyboardProps, undefined> {
         break;
       case 'p':
         this.props.onCellSize(16);
+        break;
+
+      case 'b':
+        this.props.onResize(100);
+        break;
+      case 'n':
+        this.props.onResize(200);
+        break;
+      case 'm':
+        this.props.onResize(400);
         break;
     }
   }

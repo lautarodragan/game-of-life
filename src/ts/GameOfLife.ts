@@ -13,6 +13,8 @@ export class GameOfLife {
   public renderCellColorFunction: () => void;
   public interval: number = 150;
   public gridVisible: boolean;
+  private _width: number;
+  private _height: number;
 
   constructor(canvas: HTMLCanvasElement, width: number, height: number) {
     this.canvas = canvas;
@@ -20,6 +22,8 @@ export class GameOfLife {
     this.renderCellFunction = this.renderSquares;
     this.renderClearFunction = this.renderClearPlainWhite;
     this.renderCellColorFunction = this.renderCellColorBlack;
+    this._width = width;
+    this._height = height;
   }
 
   get context() {
@@ -28,6 +32,14 @@ export class GameOfLife {
 
   get evolving() {
     return this._evolving;
+  }
+
+  get width() {
+    return this._width;
+  }
+
+  get height() {
+    return this._height;
   }
 
   startRendering() {
@@ -234,5 +246,11 @@ export class GameOfLife {
       return liveNeighbours < 2 || liveNeighbours > 3 ? 0 : 1;
     else
       return liveNeighbours === 3 ? 1 : 0;
+  }
+
+  resize(width: number, height: number): void {
+    this.cells = this.cells.resize(width, height);
+    this._width = width;
+    this._height = height;
   }
 }
