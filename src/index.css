@@ -49,11 +49,28 @@ button {
   box-shadow: 0 0 2px 0;
 
   font-size: 16px;
+  cursor: pointer;
 
   opacity: .5;
   transition: opacity .35s;
 }
 
+button * {
+  cursor: pointer;
+}
+
 button:hover {
   opacity: 1;
+}
+
+button label {
+  display: block;
+}
+
+button small {
+  display: block;
+  font-style: italic;
+  color: #666;
+  opacity: .8;
+  margin-top: 1px;
 }
