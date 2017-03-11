@@ -46,6 +46,8 @@ export class Matrix<T> {
   paste(matrix: Matrix<T>, dx: number = 0, dy: number = 0): void {
     for (let x = 0; x < matrix._width; x++) {
       for (let y = 0; y < matrix._height; y++) {
+        if (!this.isInBounds(dx + x, dy + y))
+          continue;
         this.cells[dx + x][dy + y] = matrix.getValue(x, y);
       }
     }
@@ -58,8 +60,8 @@ export class Matrix<T> {
   rotate(amount: number): Matrix<T> {
     const newWidth = amount % 2 === 0 ? this._width : this._height;
     const newHeight = amount % 2 === 0 ? this._height : this._width;
-    const matrix = new Matrix<T>(newWidth, newHeight)
-      ;
+    const matrix = new Matrix<T>(newWidth, newHeight);
+
     for (let x = 0; x < this._width; x++)
       for (let y = 0; y < this._height; y++)
         if (amount === 0)
