@@ -11,7 +11,7 @@ html, body, canvas {
   box-sizing: border-box;
 }
 
-section.controls-overlay {
+.application .controls-overlay {
   display: flex;
   position: fixed;
   left: 0;
@@ -20,13 +20,21 @@ section.controls-overlay {
   bottom: 0;
   background: transparent;
   padding: 20px;
+  opacity: 0;
+  transform: translate(0, -75px);
+  transition: opacity .4s, transform .5s;
 }
 
-section.controls-overlay nav {
+.application.mouse-moved .controls-overlay {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.application .controls-overlay nav {
   display: flex;
 }
 
-section.controls-overlay nav.controls {
+.application .controls-overlay nav.controls {
   margin-left: auto;
 }
 

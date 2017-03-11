@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as classNames from 'classnames';
 
 import { GameOfLife } from './GameOfLife';
 import { Controls } from './components/Controls';
@@ -7,6 +8,7 @@ import { Patterns } from './Patterns';
 
 interface ApplicationState {
   readonly isEvolving: boolean;
+  readonly mouseMoved: boolean;
 }
 
 class Application extends React.Component<undefined, ApplicationState> {
@@ -14,19 +16,21 @@ class Application extends React.Component<undefined, ApplicationState> {
   private readonly width = 400;
   private readonly height = 400;
   private gameOfLife: GameOfLife;
+  private mouseMoveTimer: number;
 
   constructor() {
     super();
     this.onResize = this.onResize.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.state = {
-      isEvolving: false
+      isEvolving: false,
+      mouseMoved: false
     }
   }
 
   render() {
     return (
-      <div>
+      <section className={classNames('application', this.state.mouseMoved && 'mouse-moved')} onMouseMove={this.onMouseMove.bind(this)}>
         <Controls
           isEvolving={this.state.isEvolving}
           onPastePattern={(pattern) => this.gameOfLife.pastePattern(pattern, Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height))}
@@ -35,7 +39,7 @@ class Application extends React.Component<undefined, ApplicationState> {
           onClear={() => this.gameOfLife.clear()}
         />
         <canvas ref={canvas => this.canvas = canvas} tabIndex={0} />
-      </div>
+      </section>
     )
   }
 
@@ -52,6 +56,21 @@ class Application extends React.Component<undefined, ApplicationState> {
   componentWillUnmount() {
     window.removeEventListener('resize', this.onResize);
     document.removeEventListener('keydown', this.onKeyDown);
+  }
+
+  private onMouseMove() {
+    if (this.mouseMoveTimer) {
+      clearTimeout(this.mouseMoveTimer);
+    } else {
+      if (!this.state.mouseMoved)
+        this.setState({ mouseMoved: true })
+    }
+
+    this.mouseMoveTimer = setTimeout(() => {
+      this.setState({ mouseMoved: false })
+      this.mouseMoveTimer = null;
+    }, 2000);
+
   }
 
   private updateCanvasSize() {
