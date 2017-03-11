@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Matrix } from "./Matrix";
-import { Patterns } from "./Patterns";
-import { RenderModes } from "./RenderModes";
+import { Matrix } from "../Matrix";
+import { Patterns } from "../Patterns";
+import { RenderModes } from "../RenderModes";
 
 export interface KeyboardProps {
   readonly onToggleEvolving: () => void;

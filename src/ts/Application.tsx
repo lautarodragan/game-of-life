@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 
 import { GameOfLife } from './GameOfLife';
 import { Controls } from './components/Controls';
-import { Keyboard } from "./Keyboard";
+import { Keyboard } from "./components/Keyboard";
 import { Matrix } from "./Matrix";
 import { RenderModes } from "./RenderModes";
 
