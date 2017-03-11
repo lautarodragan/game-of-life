@@ -34,7 +34,6 @@ export class Keyboard extends React.Component<KeyboardProps, undefined> {
   }
 
   private onKeyDown(event: KeyboardEvent) {
-    console.log(event.key);
     switch (event.key) {
       case ' ':
         this.props.onToggleEvolving();
