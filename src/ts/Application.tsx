@@ -7,6 +7,7 @@ import { Controls } from './components/Controls';
 import { Keyboard } from "./components/Keyboard";
 import { Matrix } from "./Matrix";
 import { RenderModes } from "./RenderModes";
+import { WindowResize } from './components/WindowResize';
 
 interface ApplicationState {
   readonly isEvolving: boolean;
@@ -22,7 +23,6 @@ class Application extends React.Component<undefined, ApplicationState> {
 
   constructor() {
     super();
-    this.onResize = this.onResize.bind(this);
     this.state = {
       isEvolving: false,
       mouseMoved: false
@@ -32,6 +32,7 @@ class Application extends React.Component<undefined, ApplicationState> {
   render() {
     return (
       <section className={classNames('application', this.state.mouseMoved && 'mouse-moved')} onMouseMove={this.onMouseMove.bind(this)}>
+        <WindowResize onResize={this.onResize.bind(this)} />
         <Controls
           isEvolving={this.state.isEvolving}
           onPastePattern={this.onPastePattern.bind(this)}
@@ -57,16 +58,11 @@ class Application extends React.Component<undefined, ApplicationState> {
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.onResize);
     this.updateCanvasSize();
     this.gameOfLife = new GameOfLife(this.canvas, this.width, this.height);
     this.gameOfLife.startRendering();
     this.gameOfLife.startEvolving();
     this.setState({ isEvolving: true })
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onResize);
   }
 
   private onMouseMove() {
@@ -93,7 +89,7 @@ class Application extends React.Component<undefined, ApplicationState> {
     this.updateCanvasSize();
   }
 
-  onPastePattern(pattern: Matrix<number>) {
+  private onPastePattern(pattern: Matrix<number>) {
     this.gameOfLife.pastePattern(pattern.rotate(Math.floor(Math.random() * 4)), Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height))
   }
 
