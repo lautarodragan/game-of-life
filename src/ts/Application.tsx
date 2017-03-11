@@ -34,7 +34,7 @@ class Application extends React.Component<undefined, ApplicationState> {
       <section className={classNames('application', this.state.mouseMoved && 'mouse-moved')} onMouseMove={this.onMouseMove.bind(this)}>
         <Controls
           isEvolving={this.state.isEvolving}
-          onPastePattern={(pattern) => this.gameOfLife.pastePattern(pattern, Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height))}
+          onPastePattern={this.onPastePattern.bind(this)}
           onStartStop={() => this.toggleEvolving()}
           onNextStep={() => this.gameOfLife.nextStep()}
           onClear={() => this.gameOfLife.clear()}
@@ -45,7 +45,7 @@ class Application extends React.Component<undefined, ApplicationState> {
           onClear={() => this.gameOfLife.clear()}
           onEvolveFaster={() => this.gameOfLife.interval = Math.max(0, this.gameOfLife.interval - 50)}
           onEvolveSlower={() => this.gameOfLife.interval += 50}
-          onPattern={(pattern: Matrix<number>) => this.gameOfLife.pastePattern(pattern, Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height)) }
+          onPattern={this.onPastePattern.bind(this)}
           onRenderCellShape={this.onRenderCellShape.bind(this)}
           onRenderClear={this.onRenderClear.bind(this)}
           onRenderCellColor={this.onRenderCellColor.bind(this)}
@@ -91,6 +91,10 @@ class Application extends React.Component<undefined, ApplicationState> {
 
   private onResize() {
     this.updateCanvasSize();
+  }
+
+  onPastePattern(pattern: Matrix<number>) {
+    this.gameOfLife.pastePattern(pattern.rotate(Math.floor(Math.random() * 4)), Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height))
   }
 
   private onRenderCellShape(renderCellMode: RenderModes.CellShape) {
