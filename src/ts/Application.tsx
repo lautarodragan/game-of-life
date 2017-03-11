@@ -3,22 +3,23 @@ import * as ReactDOM from 'react-dom';
 
 import { GameOfLife } from './GameOfLife';
 import { Controls } from './components/Controls';
-import { Patterns } from './Patterns';
+import { Keyboard } from "./Keyboard";
+import { Matrix } from "./Matrix";
+import { RenderModes } from "./RenderModes";
 
 interface ApplicationState {
   readonly isEvolving: boolean;
 }
 
 class Application extends React.Component<undefined, ApplicationState> {
-  private canvas: HTMLCanvasElement;
   private readonly width = 400;
   private readonly height = 400;
+  private canvas: HTMLCanvasElement;
   private gameOfLife: GameOfLife;
 
   constructor() {
     super();
     this.onResize = this.onResize.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
     this.state = {
       isEvolving: false
     }
@@ -34,6 +35,18 @@ class Application extends React.Component<undefined, ApplicationState> {
           onNextStep={() => this.gameOfLife.nextStep()}
           onClear={() => this.gameOfLife.clear()}
         />
+        <Keyboard
+          onToggleEvolving={() => this.toggleEvolving()}
+          onNextStep={() => this.gameOfLife.nextStep()}
+          onClear={() => this.gameOfLife.clear()}
+          onEvolveFaster={() => this.gameOfLife.interval = Math.max(0, this.gameOfLife.interval - 50)}
+          onEvolveSlower={() => this.gameOfLife.interval += 50}
+          onPattern={(pattern: Matrix<number>) => this.gameOfLife.pastePattern(pattern, Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height)) }
+          onRenderCellShape={this.onRenderCellShape.bind(this)}
+          onRenderClear={this.onRenderClear.bind(this)}
+          onRenderCellColor={this.onRenderCellColor.bind(this)}
+          onCellSize={(cellSize: number) => this.gameOfLife.cellSize = cellSize}
+        />
         <canvas ref={canvas => this.canvas = canvas} tabIndex={0} />
       </div>
     )
@@ -41,7 +54,6 @@ class Application extends React.Component<undefined, ApplicationState> {
 
   componentDidMount() {
     window.addEventListener('resize', this.onResize);
-    document.addEventListener('keydown', this.onKeyDown);
     this.updateCanvasSize();
     this.gameOfLife = new GameOfLife(this.canvas, this.width, this.height);
     this.gameOfLife.startRendering();
@@ -51,7 +63,6 @@ class Application extends React.Component<undefined, ApplicationState> {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onResize);
-    document.removeEventListener('keydown', this.onKeyDown);
   }
 
   private updateCanvasSize() {
@@ -63,91 +74,53 @@ class Application extends React.Component<undefined, ApplicationState> {
     this.updateCanvasSize();
   }
 
-  private onKeyDown(event: KeyboardEvent) {
-    console.log(event.key);
-    switch (event.key) {
-      case ' ':
-        this.toggleEvolving();
-        break;
-      case 'Enter':
-        this.gameOfLife.nextStep();
-        break;
-
-      case 'Delete':
-      case 'Backspace':
-        this.gameOfLife.clear();
-        break;
-
-      case 'ArrowRight':
-        this.gameOfLife.interval = Math.max(0, this.gameOfLife.interval - 50);
-        break;
-      case 'ArrowLeft':
-        this.gameOfLife.interval += 50;
-        break;
-
-      case '1':
-        this.gameOfLife.pastePattern(Patterns.glider, Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height));
-        break;
-      case '2':
-        this.gameOfLife.pastePattern(Patterns.lightweightSpaceship, Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height));
-        break;
-      case '3':
-        this.gameOfLife.pastePattern(Patterns.biClock, Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height));
-        break;
-
-      case 'q':
+  private onRenderCellShape(renderCellMode: RenderModes.CellShape) {
+    switch (renderCellMode) {
+      case RenderModes.CellShape.Squares:
         this.gameOfLife.renderCellFunction = this.gameOfLife.renderSquares;
         break;
-      case 'w':
+      case RenderModes.CellShape.Circles:
         this.gameOfLife.renderCellFunction = this.gameOfLife.renderCircles;
         break;
-      case 'e':
+      case RenderModes.CellShape.Lines1:
         this.gameOfLife.renderCellFunction = this.gameOfLife.renderLines1;
         break;
-      case 'r':
+      case RenderModes.CellShape.Lines2:
         this.gameOfLife.renderCellFunction = this.gameOfLife.renderLines2;
         break;
+    }
+  }
 
-      case 'a':
+  private onRenderClear(renderCellMode: RenderModes.Clear) {
+    switch (renderCellMode) {
+      case RenderModes.Clear.PlainWhite:
         this.gameOfLife.renderClearFunction = this.gameOfLife.renderClearPlainWhite;
         break;
-      case 's':
+      case RenderModes.Clear.PlainBlack:
         this.gameOfLife.renderClearFunction = this.gameOfLife.renderClearPlainBlack;
         break;
-      case 'd':
+      case RenderModes.Clear.FadeWhite:
         this.gameOfLife.renderClearFunction = this.gameOfLife.renderClearFadeWhite;
         break;
-      case 'f':
+      case RenderModes.Clear.FadeBlack:
         this.gameOfLife.renderClearFunction = this.gameOfLife.renderClearFadeBlack;
         break;
-      case 'g':
+      case RenderModes.Clear.Random:
         this.gameOfLife.renderClearFunction = this.gameOfLife.renderClearFadeColors;
         break;
+    }
+  }
 
-      case 'z':
+  private onRenderCellColor(renderCellMode: RenderModes.CellColor) {
+    switch (renderCellMode) {
+      case RenderModes.CellColor.Black:
         this.gameOfLife.renderCellColorFunction = this.gameOfLife.renderCellColorBlack;
         break;
-      case 'x':
+      case RenderModes.CellColor.White:
         this.gameOfLife.renderCellColorFunction = this.gameOfLife.renderCellColorWhite;
         break;
-      case 'c':
+      case RenderModes.CellColor.Random:
         this.gameOfLife.renderCellColorFunction = this.gameOfLife.renderCellColorRandom;
-        break;
-
-      case 'y':
-        this.gameOfLife.cellSize = 1;
-        break;
-      case 'u':
-        this.gameOfLife.cellSize = 2;
-        break;
-      case 'i':
-        this.gameOfLife.cellSize = 4;
-        break;
-      case 'o':
-        this.gameOfLife.cellSize = 8;
-        break;
-      case 'p':
-        this.gameOfLife.cellSize = 16;
         break;
     }
   }
