@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css?family=Quattrocento');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800');
+
+html, body, canvas {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  font-family: 'Opens Sans', serif;
+  box-sizing: border-box;
+}
+
+.application {
+  .controls-overlay {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: transparent;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity .4s;
+
+    .top, .bottom {
+      display: flex;
+      transition: transform .5s;
+
+      nav {
+        display: flex;
+      }
+
+    }
+
+    .top {
+      transform: translate(0, -75px);
+    }
+
+    .bottom {
+      margin-top: auto;
+      transform: translate(0, 75px);
+    }
+
+    .right {
+      margin-left: auto;
+    }
+
+    .dropdown {
+      position: relative;
+      display: flex;
+      flex-direction: column-reverse;
+
+      .trigger {
+        z-index: 1;
+      }
+
+      button:not(.trigger) {
+        position: absolute;
+        bottom: 0;
+        opacity: 0;
+        transform: rotate(-10deg);
+        transition: opacity .4s, bottom .5s, transform .4s;
+      }
+
+      @for $i from 0 through 10 {
+        &.open button:not(.trigger):nth-child(#{$i}) {
+          bottom: #{($i - 1) * 100}px;
+          opacity: 1;
+          transform: rotate(0);
+        }
+      }
+
+    }
+
+  }
+
+  &.mouse-moved {
+
+    .controls-overlay {
+      opacity: 1;
+    }
+
+    .controls-overlay .top {
+      transform: translate(0, 0);
+    }
+
+    .controls-overlay .bottom {
+      transform: translate(0, 0);
+    }
+  }
+}
+
+button {
+  width: 100px;
+  height: 100px;
+  margin-right: 10px;
+
+  background-color: white;
+  border: 1px solid #666;
+  border-radius: 4px;
+  box-shadow: 0 0 2px 0;
+
+  font-size: 16px;
+  cursor: pointer;
+
+  opacity: .5;
+  transition: opacity .35s;
+}
+
+button * {
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 1;
+}
+
+button label {
+  display: block;
+}
+
+button small {
+  display: block;
+  font-style: italic;
+  color: #666;
+  opacity: .8;
+  margin-top: 1px;
+}

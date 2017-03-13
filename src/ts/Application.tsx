@@ -9,6 +9,8 @@ import { Matrix } from "./Matrix";
 import { RenderModes } from "./RenderModes";
 import { WindowResize } from './components/WindowResize';
 
+import '../Application.scss';
+
 interface ApplicationState {
   readonly isEvolving: boolean;
   readonly mouseMoved: boolean;
@@ -37,13 +39,20 @@ class Application extends React.Component<undefined, ApplicationState> {
           onStartStop={() => this.toggleEvolving()}
           onNextStep={() => this.gameOfLife.nextStep()}
           onClear={() => this.gameOfLife.clear()}
+          onEvolveFaster={this.onEvolveFaster.bind(this)}
+          onEvolveSlower={this.onEvolveSlower.bind(this)}
+          onResize={size => this.gameOfLife.resize(size, size)}
+          onCellSize={(cellSize: number) => this.gameOfLife.cellSize = cellSize}
+          onRenderCellShape={this.onRenderCellShape.bind(this)}
+          onRenderCellColor={this.onRenderCellColor.bind(this)}
+          onRenderClear={this.onRenderClear.bind(this)}
         />
         <Keyboard
           onToggleEvolving={() => this.toggleEvolving()}
           onNextStep={() => this.gameOfLife.nextStep()}
           onClear={() => this.gameOfLife.clear()}
-          onEvolveFaster={() => this.gameOfLife.interval = Math.max(0, this.gameOfLife.interval - 50)}
-          onEvolveSlower={() => this.gameOfLife.interval += 50}
+          onEvolveFaster={this.onEvolveFaster.bind(this)}
+          onEvolveSlower={this.onEvolveSlower.bind(this)}
           onPattern={this.onPastePattern.bind(this)}
           onRenderCellShape={this.onRenderCellShape.bind(this)}
           onRenderClear={this.onRenderClear.bind(this)}
@@ -90,6 +99,14 @@ class Application extends React.Component<undefined, ApplicationState> {
 
   private onPastePattern(pattern: Matrix<number>) {
     this.gameOfLife.pastePattern(pattern.rotate(Math.floor(Math.random() * 4)), Math.floor(Math.random() * this.gameOfLife.width), Math.floor(Math.random() * this.gameOfLife.height))
+  }
+
+  private onEvolveFaster() {
+    this.gameOfLife.interval = Math.max(0, this.gameOfLife.interval - 50)
+  }
+
+  private onEvolveSlower() {
+    this.gameOfLife.interval += 50
   }
 
   private onRenderCellShape(renderCellMode: RenderModes.CellShape) {
